@@ -119,12 +119,9 @@ if [[ ${ans} == "y" ]]; then
   cd ${oldcwd}
 fi
 
-# install system packages
+# install packages
 checkgrp system
-
-# install docker
-checkgrp docker
-
+checkgrp docker true
 # Tell Docker CLI to talk to minikube's VM
 status=$(minikube status 2>/dev/null)
 [[ $(echo ${status} | grep host | awk '{print $2}') != "Running" ]] && minikube start &>/dev/null
@@ -132,7 +129,6 @@ status=$(minikube status 2>/dev/null)
 [[ $(grep -c MINIKUBE_ACTIVE_DOCKERD ~/.bash_profile) -lt 1 ]] && minikube docker-env >> ~/.bash_profile
 [[ $(grep -c docker.local /etc/hosts) -lt 1 ]] && echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 eval $(minikube docker-env)
-
 # install packages
 checkgrp languages
 checkgrp aws-tools true

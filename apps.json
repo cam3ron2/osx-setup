@@ -10,7 +10,6 @@
     ],
     "gcp-tools": [],
     "docker": [
-      "hyperkit",
       "minikube",
       "docker",
       "docker-compose"
