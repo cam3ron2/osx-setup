@@ -115,40 +115,68 @@ echo "${yellow}Installing languages${reset}"
 for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.lang[]'); do
   checkins ${i}
 done
+curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/go.sh >> ~/.bash_profile
+source ~/.bash_profile
 
 # install aws tools
-echo "${yellow}Installing AWS tools${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.aws[]'); do
-  checkins ${i}
-done
+read -e -p "Install aws tools? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing AWS tools${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.aws[]'); do
+    checkins ${i}
+  done
+fi 
 
 # install gcp tools
-echo "${yellow}Installing GCP tools${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gcp[]'); do
-  checkins ${i}
-done
+read -e -p "Install GCP tools? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing GCP tools${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gcp[]'); do
+    checkins ${i}
+  done
+fi
 
 # installing azure tools
-echo "${yellow}Installing Azure tools${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.azure[]'); do
-  checkins ${i}
-done
+read -e -p "Install Azure tools? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing Azure tools${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.azure[]'); do
+    checkins ${i}
+  done
+fi
 
 # installing kubernetes tools
-echo "${yellow}Installing Kubernetes tools${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.kubernetes[]'); do
-  checkins ${i}
-done
+read -e -p "Install kubernetes tools? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing Kubernetes tools${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.kubernetes[]'); do
+    checkins ${i}
+  done
+  curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/.bash_profile >> ~/.bash_profile
+fi
 
 # installing GNU Utils
-echo "${yellow}Installing GNU Utils${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gnu-utils[]'); do
-  checkins ${i}
-done
+read -e -p "Install GNU Utils? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing GNU Utils${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gnu-utils[]'); do
+    checkins ${i}
+  done
+fi 
 
 # installing powerline
-echo "${yellow}Installing Powerline${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.powerline[]'); do
-  checkins ${i}
-done
-
+read -e -p "Install powerline? [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  echo "${yellow}Installing Powerline${reset}"
+  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.powerline[]'); do
+    checkins ${i}
+  done
+  curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
+  source ~/.bash_profile
+fi
