@@ -2,8 +2,6 @@
 # script to setup osx the way I like it
 # feel free to change this to match your own preferences
 
-set -ex
-
 export TERM="xterm-256color"
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -131,11 +129,11 @@ status=$(minikube status 2>/dev/null)
 eval $(minikube docker-env)
 # install packages
 checkgrp languages
-checkgrp aws-tools true
-checkgrp gcp-tools true
-checkgrp azure-tools true
-checkgrp kubernetes-tools true
-checkgrp gnu-utils true
+checkgrp aws_tools true
+checkgrp gcp_tools true
+checkgrp azure_tools true
+checkgrp kubernetes_tools true
+checkgrp gnu_utils true
 checkgrp powerline
 
 # install browser

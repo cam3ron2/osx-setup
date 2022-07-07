@@ -1,20 +1,20 @@
 {
   "apps": {
-    "aws-tools": [
+    "aws_tools": [
       "awscli",
       "docker-credential-helper-ecr",
       "saml2aws"
     ],
-    "azure-tools": [
+    "azure_tools": [
       "azure-cli"
     ],
-    "gcp-tools": [],
+    "gcp_tools": [],
     "docker": [
       "minikube",
       "docker",
       "docker-compose"
     ],
-    "kubernetes-tools": [
+    "kubernetes_tools": [
       "velero",
       "opa",
       "prometheus",
@@ -49,7 +49,7 @@
       "less",
       "gh"
     ],
-    "gnu-utils": [
+    "gnu_utils": [
       "coreutils",
       "binutils",
       "diffutils",
