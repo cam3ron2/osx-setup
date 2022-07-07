@@ -63,6 +63,16 @@ if ! hash brew 2>/dev/null; then
 fi
 checkins jq
 checkins python3
+checkins git
+
+# configure git
+echo "${yellow}Configuring git${reset}"
+read -e -p "What is your name? " name
+read -e -p "What is your email? " email
+if hash git 2>/dev/null; then
+  git config --global user.email "${email}"
+  git config --global user.name "${name}"
+fi
 
 # setup bash_profile
 if grep 'BASH_SILENCE_DEPRECATION_WARNING' ~/.bash_profile &>/dev/null; then
@@ -89,4 +99,3 @@ if [[ ${ans} == "y" ]]; then
 fi
 
 # install general packages
-  
