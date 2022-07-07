@@ -36,6 +36,8 @@
       "go"
     ],
     "system": [
+      "iterm2",
+      "jwbargsten/misc/defbro",
       "bash",
       "conftest",
       "python",

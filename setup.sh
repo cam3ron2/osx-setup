@@ -12,8 +12,7 @@ checkins() {
   local pkg flags
   read pkg flags <<< ${@}
   if ! hash ${pkg} 2>/dev/null; then
-    echo " * ${yellow}WARN${reset}: ${pkg} is not installed"
-    brew install --quiet ${pkg} ${flags}
+    brew install --quiet ${pkg} ${flags} &>/dev/null
   else
     echo " * ${green}SUCCESS${reset}: ${pkg} is installed"
   fi
@@ -51,6 +50,13 @@ brewinstall() {
     echo " * ${red}ERROR${reset}: Homebrew failed to install"
   fi
 }
+
+# install xcode
+if [[ ! -f ~/Applications/Xcode.app ]]; then
+  echo "${yellow}Please install Xcode${reset}"
+  echo "${yellow}WARNING: This may take a while${reset}"
+  open -a App\ Store.app
+fi
 
 # install xcode command-line tools
 echo "${yellow}Checking prerequisites${reset}"
@@ -180,3 +186,78 @@ if [[ ${ans} == "y" ]]; then
   curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
   source ~/.bash_profile
 fi
+
+# wait for xcode
+echo "${yellow}Waiting for Xcode to be installed...${reset}"
+until [[ -f ~/Applications/Xcode.app ]]; do 
+  sleep 1
+done
+echo "${green}SUCCESS${reset}: Xcode is installed"
+
+
+# install browser
+echo "${yellow}What browser would you like to install?${reset}"
+select b in waterfox waterfox-classic chrome chromium firefox vivaldi none; do
+  echo "${yellow}Installing ${b}!${reset}"
+  case ${b} in
+    firefox)
+      checkins firefox
+      break
+    ;;
+    waterfox)
+      checkins waterfox
+      break
+    ;;
+    waterfox-classic)
+      checkins waterfox-classic
+      break
+    ;;
+    chrome)
+      checkins google-chrome
+      break
+    ;;
+    chromium)
+      checkins chromium
+      break
+    ;;
+    vivaldi)
+      checkins vivaldi
+      break
+    ;;
+    edge)
+      checkins microsoft-edge
+      break
+    ;;
+    none)
+      break
+    ;;
+  esac
+done
+
+# install editor
+echo "${yellow}What editor would you like to install?${reset}"
+select e in atom vscode sublime none; do
+  echo "${yellow}Installing ${e}!${reset}"
+  case ${e} in 
+    atom)
+      checkins atom
+      break
+    ;;
+    vscode)
+      checkins visual-studio-code
+      break
+    ;;
+    sublime)
+      checkins sublime-text
+      break
+    ;;
+    none)
+      break
+    ;;
+  esac
+done
+
+echo "${yellow}Logging in to github...${reset}"
+gh auth login
+
+echo "${green}COMPLETE${reset}: Setup is complete!"
