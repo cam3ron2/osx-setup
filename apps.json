@@ -37,7 +37,7 @@
     ],
     "system": [
       "iterm2",
-      "jwbargsten/misc/defbro",
+      "defaultbrowser",
       "bash",
       "conftest",
       "python",

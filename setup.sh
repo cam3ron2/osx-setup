@@ -51,13 +51,6 @@ brewinstall() {
   fi
 }
 
-# install xcode
-if [[ ! -f ~/Applications/Xcode.app ]]; then
-  echo "${yellow}Please install Xcode${reset}"
-  echo "${yellow}WARNING: This may take a while${reset}"
-  open -a App\ Store.app
-fi
-
 # install xcode command-line tools
 echo "${yellow}Checking prerequisites${reset}"
 xcode-select --install 2>/dev/null
@@ -193,48 +186,17 @@ if [[ ${ans} == "y" ]]; then
   source ~/.bash_profile
 fi
 
-# wait for xcode
-echo "${yellow}Waiting for Xcode to be installed...${reset}"
-until [[ -f ~/Applications/Xcode.app ]]; do 
-  sleep 1
-done
-echo "${green}SUCCESS${reset}: Xcode is installed"
-
-
 # install browser
 echo "${yellow}What browser would you like to install?${reset}"
-select b in waterfox waterfox-classic chrome chromium firefox vivaldi none; do
+select b in firefox waterfox waterfox-classic google-chrome chromium vivaldi microsoft-edge none; do
   echo "${yellow}Installing ${b}!${reset}"
   case ${b} in
-    firefox)
-      checkins firefox
-      break
-    ;;
-    waterfox)
-      checkins waterfox
-      break
-    ;;
-    waterfox-classic)
-      checkins waterfox-classic
-      break
-    ;;
-    chrome)
-      checkins google-chrome
-      break
-    ;;
-    chromium)
-      checkins chromium
-      break
-    ;;
-    vivaldi)
-      checkins vivaldi
-      break
-    ;;
-    edge)
-      checkins microsoft-edge
-      break
-    ;;
     none)
+      break
+    ;;
+    *)
+      checkins ${b}
+      defaultbrowser ${b}
       break
     ;;
   esac
@@ -242,22 +204,14 @@ done
 
 # install editor
 echo "${yellow}What editor would you like to install?${reset}"
-select e in atom vscode sublime none; do
+select e in atom visual-studio-code sublime-text none; do
   echo "${yellow}Installing ${e}!${reset}"
-  case ${e} in 
-    atom)
-      checkins atom
-      break
-    ;;
-    vscode)
-      checkins visual-studio-code
-      break
-    ;;
-    sublime)
-      checkins sublime-text
-      break
-    ;;
+  case ${e} in
     none)
+      break
+    ;; 
+    *)
+      checkins ${e}
       break
     ;;
   esac
