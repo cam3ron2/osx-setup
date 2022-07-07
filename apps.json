@@ -26,8 +26,7 @@
       "helm",
       "argocd"
     ],
-    "openstack": [],
-    "python": [
+    "powerline": [
       "powerline-shell",
       "powerline-status"
     ],

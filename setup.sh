@@ -99,3 +99,56 @@ if [[ ${ans} == "y" ]]; then
 fi
 
 # install general packages
+echo "${yellow}Installing general packages${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.system[]'); do
+  checkins ${i}
+done
+
+# install docker
+echo "${yellow}Installing Docker (without docker desktop)${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.docker[]'); do
+  checkins ${i}
+done
+
+# install languages
+echo "${yellow}Installing languages${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.lang[]'); do
+  checkins ${i}
+done
+
+# install aws tools
+echo "${yellow}Installing AWS tools${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.aws[]'); do
+  checkins ${i}
+done
+
+# install gcp tools
+echo "${yellow}Installing GCP tools${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gcp[]'); do
+  checkins ${i}
+done
+
+# installing azure tools
+echo "${yellow}Installing Azure tools${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.azure[]'); do
+  checkins ${i}
+done
+
+# installing kubernetes tools
+echo "${yellow}Installing Kubernetes tools${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.kubernetes[]'); do
+  checkins ${i}
+done
+
+# installing GNU Utils
+echo "${yellow}Installing GNU Utils${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gnu-utils[]'); do
+  checkins ${i}
+done
+
+# installing powerline
+echo "${yellow}Installing Powerline${reset}"
+for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.powerline[]'); do
+  checkins ${i}
+done
+
