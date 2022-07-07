@@ -1,21 +1,21 @@
 {
   "apps": {
-    "aws": [
+    "aws-tools": [
       "awscli",
       "docker-credential-helper-ecr",
       "saml2aws"
     ],
-    "azure": [
+    "azure-tools": [
       "azure-cli"
     ],
-    "gcp": [],
+    "gcp-tools": [],
     "docker": [
       "hyperkit",
       "minikube",
       "docker",
       "docker-compose"
     ],
-    "kubernetes": [
+    "kubernetes-tools": [
       "velero",
       "opa",
       "prometheus",
@@ -30,7 +30,7 @@
       "powerline-shell",
       "powerline-status"
     ],
-    "lang": [
+    "languages": [
       "rust",
       "terraform",
       "go"

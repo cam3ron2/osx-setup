@@ -51,6 +51,22 @@ brewinstall() {
   fi
 }
 
+checkgrp() {
+  local ans grp ask=false
+  read grp ask <<< ${@}
+  if ${ask}; then
+    read -e -p "Install ${grp}? [y/n] " ans
+    ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+  else
+    ans="y"
+  fi
+  if [[ ${ans} == "y" ]]; then
+    for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r --arg grp ${grp} '.apps.$grp[]'); do
+      checkins ${grp}
+    done
+  fi
+}
+
 # install xcode command-line tools
 echo "${yellow}Checking prerequisites${reset}"
 xcode-select --install 2>/dev/null
@@ -64,15 +80,6 @@ checkins jq
 checkins python3
 checkins git
 
-# configure git
-echo "${yellow}Configuring git${reset}"
-read -e -p "What is your name? " name
-read -e -p "What is your email? " email
-if hash git 2>/dev/null; then
-  git config --global user.email "${email}"
-  git config --global user.name "${name}"
-fi
-
 # setup bash_profile
 if grep 'BASH_SILENCE_DEPRECATION_WARNING' ~/.bash_profile &>/dev/null; then
   echo "export BASH_SILENCE_DEPRECATION_WARNING=1" >> ~/.bash_profile
@@ -84,7 +91,6 @@ if grep 'HOMEBREW_PREFIX' ~/.bash_profile &>/dev/null; then
     echo "# End Homebrew" >> ~/.bash_profile
   fi
 fi
-source ~/.bash_profile
 
 # install fonts
 read -e -p "Install fonts? [y/n] " ans
@@ -95,95 +101,47 @@ if [[ ${ans} == "y" ]]; then
   cd ~/Library
   curl -Ss -L https://github.com/cam3ron2/osx-setup/raw/main/fonts.tgz | tar xz --strip 1 -C Fonts
   cd ${oldcwd}
-fi
+ff
 
-# install general packages
-echo "${yellow}Installing general packages${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.system[]'); do
-  checkins ${i}
-done
+# install system packages
+checkgrp system
 
 # install docker
-echo "${yellow}Installing Docker (without docker desktop)${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.docker[]'); do
-  checkins ${i}
-done
+checkgrp docker
+
 # Tell Docker CLI to talk to minikube's VM
-minikube start &>/dev/null
-minikube pause &>/dev/null
-minikube docker-env >> ~/.bash_profile
+status=$(minikube status 2>/dev/null)
+[[ $(echo ${status} | grep host | awk '{print $2}') != "Running" ]] && minikube start &>/dev/null
+[[ $(echo ${status} | grep kubelet | awk '{print $2}') == "Running" ]] && minikube pause &>/dev/null
+[[ $(grep -c MINIKUBE_ACTIVE_DOCKERD ~/.bash_profile) -lt 1 ]] && minikube docker-env >> ~/.bash_profile
+[[ $(grep -c docker.local /etc/hosts) -lt 1 ]] && echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 eval $(minikube docker-env)
-echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 
 # install languages
-echo "${yellow}Installing languages${reset}"
-for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.lang[]'); do
-  checkins ${i}
-done
-curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/go.sh >> ~/.bash_profile
-source ~/.bash_profile
+checkgrp languages
 
 # install aws tools
-read -e -p "Install aws tools? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing AWS tools${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.aws[]'); do
-    checkins ${i}
-  done
-fi 
+checkgrp aws-tools true
 
 # install gcp tools
-read -e -p "Install GCP tools? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing GCP tools${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gcp[]'); do
-    checkins ${i}
-  done
-fi
+checkgrp gcp-tools true
 
 # installing azure tools
-read -e -p "Install Azure tools? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing Azure tools${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.azure[]'); do
-    checkins ${i}
-  done
-fi
+checkgrp azure-tools true
 
 # installing kubernetes tools
-read -e -p "Install kubernetes tools? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing Kubernetes tools${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.kubernetes[]'); do
-    checkins ${i}
-  done
+checkgrp kubernetes-tools true
+if ! grep '# Functions' ~/.bash_profile; then 
   curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/.bash_profile >> ~/.bash_profile
-fi
-
-# installing GNU Utils
-read -e -p "Install GNU Utils? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing GNU Utils${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.gnu-utils[]'); do
-    checkins ${i}
-  done
 fi 
 
+# installing GNU Utils
+checkgrp gnu-utils true
+
 # installing powerline
-read -e -p "Install powerline? [y/n] " ans
-ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
-if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing Powerline${reset}"
-  for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.powerline[]'); do
-    checkins ${i}
-  done
+checkgrp powerline
+if ! grep '# Powerline' ~/.bash_profile; then 
   curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
-  source ~/.bash_profile
 fi
 
 # install browser
@@ -220,4 +178,5 @@ done
 echo "${yellow}Logging in to github...${reset}"
 gh auth login
 
+source ~/.bash_profile
 echo "${green}COMPLETE${reset}: Setup is complete!"
