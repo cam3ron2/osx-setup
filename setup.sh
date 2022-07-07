@@ -2,6 +2,8 @@
 # script to setup osx the way I like it
 # feel free to change this to match your own preferences
 
+set -ex
+
 export TERM="xterm-256color"
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -55,22 +57,36 @@ checkgrp() {
   local ans grp ask=false
   read grp ask <<< ${@}
   if ${ask}; then
-    read -e -p "Install ${grp}? [y/n] " ans
+    read -e -p "${yellow}Install ${grp}?${reset} [y/n] " ans
     ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
   else
     ans="y"
   fi
   if [[ ${ans} == "y" ]]; then
-    for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r --arg grp ${grp} '.apps.$grp[]'); do
-      checkins ${grp}
-    done
+    case ${grp} in
+      kubernetes-tools)
+        grep '# Functions' ~/.bash_profile || curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/.bash_profile >> ~/.bash_profile
+        ;;
+      powerline)
+        for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r --arg grp ${grp} ".apps.$grp[]"); do
+          pip3 install ${i}
+        done
+        grep '# Powerline' ~/.bash_profile || curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
+        ;;
+      *)
+        for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r --arg grp ${grp} ".apps.$grp[]"); do
+          checkins ${i}
+        done
+        ;;
+    esac 
   fi
 }
 
 # install xcode command-line tools
 echo "${yellow}Checking prerequisites${reset}"
-xcode-select --install 2>/dev/null
+xcode-select --install 2>/dev/null || true
 softwareupdate --all --install --force &>/dev/null
+sudo xcodebuild -license accept
 
 # install homebrew, jq, and python3
 if ! hash brew 2>/dev/null; then
@@ -93,7 +109,7 @@ if grep 'HOMEBREW_PREFIX' ~/.bash_profile &>/dev/null; then
 fi
 
 # install fonts
-read -e -p "Install fonts? [y/n] " ans
+read -e -p "${yellow}Install fonts?${reset} [y/n] " ans
 ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
 if [[ ${ans} == "y" ]]; then
   echo "${yellow}Installing fonts${reset}"
@@ -101,7 +117,7 @@ if [[ ${ans} == "y" ]]; then
   cd ~/Library
   curl -Ss -L https://github.com/cam3ron2/osx-setup/raw/main/fonts.tgz | tar xz --strip 1 -C Fonts
   cd ${oldcwd}
-ff
+fi
 
 # install system packages
 checkgrp system
@@ -117,32 +133,14 @@ status=$(minikube status 2>/dev/null)
 [[ $(grep -c docker.local /etc/hosts) -lt 1 ]] && echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 eval $(minikube docker-env)
 
-# install languages
+# install packages
 checkgrp languages
-
-# install aws tools
 checkgrp aws-tools true
-
-# install gcp tools
 checkgrp gcp-tools true
-
-# installing azure tools
 checkgrp azure-tools true
-
-# installing kubernetes tools
 checkgrp kubernetes-tools true
-if ! grep '# Functions' ~/.bash_profile; then 
-  curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/.bash_profile >> ~/.bash_profile
-fi 
-
-# installing GNU Utils
 checkgrp gnu-utils true
-
-# installing powerline
 checkgrp powerline
-if ! grep '# Powerline' ~/.bash_profile; then 
-  curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
-fi
 
 # install browser
 echo "${yellow}What browser would you like to install?${reset}"
