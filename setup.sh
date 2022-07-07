@@ -194,10 +194,10 @@ read -e -p "Enter your github email: " email
 read -e -p "Enter your name: " name
 echo """
 [user]
-	email = ${email}
-	name = ${name}
+  email = ${email}
+  name = ${name}
 [hub]
-	protocol = ssh
+  protocol = ssh
 """ > ~/.gitconfig
 
 echo "${yellow}Logging in to github...${reset}"
