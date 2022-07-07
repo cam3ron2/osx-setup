@@ -61,7 +61,7 @@ fi
 # install xcode command-line tools
 echo "${yellow}Checking prerequisites${reset}"
 xcode-select --install 2>/dev/null
-softwareupdate --all --install --force
+softwareupdate --all --install --force &>/dev/null
 
 # install homebrew, jq, and python3
 if ! hash brew 2>/dev/null; then
@@ -115,6 +115,12 @@ echo "${yellow}Installing Docker (without docker desktop)${reset}"
 for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r '.apps.docker[]'); do
   checkins ${i}
 done
+# Tell Docker CLI to talk to minikube's VM
+minikube start &>/dev/null
+minikube pause &>/dev/null
+minikube docker-env >> ~/.bash_profile
+eval $(minikube docker-env)
+echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
 
 # install languages
 echo "${yellow}Installing languages${reset}"
