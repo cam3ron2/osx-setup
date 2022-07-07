@@ -1,0 +1,73 @@
+{
+  "apps": {
+    "aws": [
+      "awscli",
+      "docker-credential-helper-ecr",
+      "saml2aws"
+    ],
+    "azure": [
+      "azure-cli"
+    ],
+    "gcp": [],
+    "docker": [
+      "hyperkit",
+      "minikube",
+      "docker",
+      "docker-compose"
+    ],
+    "kubernetes": [
+      "velero",
+      "opa",
+      "prometheus",
+      "krew",
+      "kubernetes-cli",
+      "kubeval",
+      "kustomize",
+      "helm",
+      "argocd"
+    ],
+    "openstack": [],
+    "python": [
+      "powerline-shell",
+      "powerline-status"
+    ],
+    "lang": [
+      "rust",
+      "terraform",
+      "go"
+    ],
+    "system": [
+      "bash",
+      "conftest",
+      "python",
+      "rsync",
+      "wget",
+      "git",
+      "unzip",
+      "watch",
+      "gzip",
+      "less",
+      "gh"
+    ],
+    "gnu-utils": [
+      "coreutils",
+      "binutils",
+      "diffutils",
+      "curl",
+      "ed --default-names",
+      "findutils --with-default-names",
+      "gnu-indent --with-default-names",
+      "gnu-sed --with-default-names",
+      "gnu-tar --with-default-names",
+      "gnu-which --with-default-names",
+      "gnutls",
+      "grep --with-default-names",
+      "screen",
+      "wdiff --with-gettext",
+      "gpatch",
+      "m4",
+      "make"
+    ]
+  }
+}
+
