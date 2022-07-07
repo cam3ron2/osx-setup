@@ -51,6 +51,16 @@ brewinstall() {
   fi
 }
 
+pyins() {
+  local pkg
+  read pkg <<< ${@}
+  if ! hash ${pkg} 2>/dev/null; then
+    pip3 install ${pkg} &>/dev/null
+  else
+    echo " * ${green}SUCCESS${reset}: ${pkg} is installed"
+  fi
+}
+
 checkgrp() {
   local ans grp ask=false
   read grp ask <<< ${@}
@@ -67,7 +77,7 @@ checkgrp() {
         ;;
       powerline)
         for i in $(curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/apps.json | jq -r --arg grp ${grp} ".apps.$grp[]"); do
-          pip3 install ${i}
+          pyins ${i}
         done
         grep '# Powerline' ~/.bash_profile || curl -Ss https://raw.githubusercontent.com/cam3ron2/osx-setup/main/powerline.sh >> ~/.bash_profile
         ;;
@@ -81,7 +91,7 @@ checkgrp() {
 }
 
 # install xcode command-line tools
-echo "${yellow}Checking prerequisites${reset}"
+echo "${yellow}Checking prerequisites${reset} (may require password for sudo)"
 xcode-select --install 2>/dev/null || true
 softwareupdate --all --install --force &>/dev/null
 sudo xcodebuild -license accept
@@ -110,7 +120,6 @@ fi
 read -e -p "${yellow}Install fonts?${reset} [y/n] " ans
 ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
 if [[ ${ans} == "y" ]]; then
-  echo "${yellow}Installing fonts${reset}"
   oldcwd=$(pwd)
   cd ~/Library
   curl -Ss -L https://github.com/cam3ron2/osx-setup/raw/main/fonts.tgz | tar xz --strip 1 -C Fonts
@@ -139,13 +148,15 @@ checkgrp powerline
 # install browser
 echo "${yellow}What browser would you like to install?${reset}"
 select b in firefox waterfox waterfox-classic google-chrome chromium vivaldi microsoft-edge none; do
-  echo "${yellow}Installing ${b}!${reset}"
   case ${b} in
     none)
       break
     ;;
     *)
       checkins ${b}
+      until defaultbrowser | grep ${b}; do
+        sleep 1
+      done
       defaultbrowser ${b}
       break
     ;;
@@ -155,7 +166,6 @@ done
 # install editor
 echo "${yellow}What editor would you like to install?${reset}"
 select e in atom visual-studio-code sublime-text none; do
-  echo "${yellow}Installing ${e}!${reset}"
   case ${e} in
     none)
       break
@@ -166,6 +176,29 @@ select e in atom visual-studio-code sublime-text none; do
     ;;
   esac
 done
+
+read -e -p "${yellow}Generate SSH key for github?${reset} [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  read -e -p " * ${yellow}What should we name the key?${reset} (ex: id_rsa) " keyname
+  if [[ ! -f ~/.ssh/${keyname} ]]; then
+    ssh-keygen -t rsa -b 4096 -C "$(whoami)@$(hostname)" -f ~/.ssh/${keyname}
+    echo " * ${green}SUCCESS${reset}: SSH key generated"
+  else
+    echo " * ${red}WARN${reset}: SSH key already exists - skipping"
+  fi
+fi
+
+echo "${yellow}Configuring git${reset}"
+read -e -p "Enter your github email: " email 
+read -e -p "Enter your name: " name
+echo """
+[user]
+	email = ${email}
+	name = ${name}
+[hub]
+	protocol = ssh
+""" > ~/.gitconfig
 
 echo "${yellow}Logging in to github...${reset}"
 gh auth login
