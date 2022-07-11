@@ -15,6 +15,7 @@
       "docker-compose"
     ],
     "kubernetes_tools": [
+      "stern",
       "velero",
       "opa",
       "prometheus",
