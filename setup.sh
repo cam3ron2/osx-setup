@@ -143,6 +143,23 @@ checkgrp gcp_tools true
 checkgrp azure_tools true
 checkgrp kubernetes_tools true
 checkgrp gnu_utils true
+read -e -p "${yellow}Symlink GNU tools?${reset} [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  tolink=$(ls $(dirname $(which brew))/g*)
+  for i in ${tolink}; do
+    n=$(basename ${i})
+    d=$(dirname ${i})
+    if [[ -f $(which ${n:1}) ]]; then
+      if [[ $(which ${n:1}) != $(which ${n}) ]]; then
+        if [[ ! -f ${d}/${n:1} ]]; then
+          ln -s ${d}/${n} ${d}/${n:1}
+        fi
+        ln -s ${directory}/bin/g${i} /usr/local/bin/${i}
+      fi
+    fi
+  done
+fi
 checkgrp powerline
 
 # install browser
