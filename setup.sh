@@ -44,8 +44,6 @@ brewinstall() {
   cd ${oldcwd}
   if hash brew 2>/dev/null; then
     echo " * ${green}SUCCESS${reset}: Homebrew installed"
-    checkins jq
-    checkins python3
   else
     echo " * ${red}ERROR${reset}: Homebrew failed to install"
   fi
@@ -153,9 +151,9 @@ if [[ ${ans} == "y" ]]; then
     if [[ -f $(which ${n:1}) ]]; then
       if [[ $(which ${n:1}) != $(which ${n}) ]]; then
         if [[ ! -f ${d}/${n:1} ]]; then
+          echo "  * ${green}LINKING${reset} ${d}/${n:1} -> ${d}/${n}"
           ln -s ${d}/${n} ${d}/${n:1}
         fi
-        ln -s ${directory}/bin/g${i} /usr/local/bin/${i}
       fi
     fi
   done
