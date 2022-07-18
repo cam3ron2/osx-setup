@@ -151,7 +151,7 @@ if [[ ${ans} == "y" ]]; then
     if [[ -f $(which ${n:1}) ]]; then
       if [[ $(which ${n:1}) != $(which ${n}) ]]; then
         if [[ ! -f ${d}/${n:1} ]]; then
-          echo "  * ${green}LINKING${reset} ${d}/${n:1} -> ${d}/${n}"
+          echo " * ${green}LINKING${reset} ${d}/${n:1} -> ${d}/${n}"
           ln -s ${d}/${n} ${d}/${n:1}
         fi
       fi
