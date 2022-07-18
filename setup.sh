@@ -128,12 +128,16 @@ fi
 checkgrp system
 checkgrp docker true
 # Tell Docker CLI to talk to minikube's VM
-status=$(minikube status 2>/dev/null)
-[[ $(echo ${status} | grep host | awk '{print $2}') != "Running" ]] && minikube start &>/dev/null
-[[ $(echo ${status} | grep kubelet | awk '{print $2}') == "Running" ]] && minikube pause &>/dev/null
-[[ $(grep -c MINIKUBE_ACTIVE_DOCKERD ~/.bash_profile) -lt 1 ]] && minikube docker-env >> ~/.bash_profile
-[[ $(grep -c docker.local /etc/hosts) -lt 1 ]] && echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
-eval $(minikube docker-env)
+read -e -p "${yellow}Use Minikube Docker instead of Docker Desktop?${reset} [y/n] " ans
+ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+if [[ ${ans} == "y" ]]; then
+  status=$(minikube status 2>/dev/null)
+  [[ $(echo ${status} | grep host | awk '{print $2}') != "Running" ]] && minikube start &>/dev/null
+  [[ $(echo ${status} | grep kubelet | awk '{print $2}') == "Running" ]] && minikube pause &>/dev/null
+  [[ $(grep -c MINIKUBE_ACTIVE_DOCKERD ~/.bash_profile) -lt 1 ]] && minikube docker-env >> ~/.bash_profile
+  [[ $(grep -c docker.local /etc/hosts) -lt 1 ]] && echo "`minikube ip` docker.local" | sudo tee -a /etc/hosts > /dev/null
+  eval $(minikube docker-env)
+fi
 # install packages
 checkgrp languages
 checkgrp aws_tools true
