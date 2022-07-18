@@ -148,8 +148,8 @@ if [[ ${ans} == "y" ]]; then
   for i in ${tolink}; do
     n=$(basename ${i})
     d=$(dirname ${i})
-    if [[ -f $(which ${n:1}) ]]; then
-      if [[ $(which ${n:1}) != $(which ${n}) ]]; then
+    if [[ -f $(which ${n:1} 2&>/dev/null) ]]; then
+      if [[ $(which ${n:1} 2&>/dev/null) != $(which ${n} 2&>/dev/null) ]]; then
         if [[ ! -f ${d}/${n:1} ]]; then
           echo " * ${green}LINKING${reset} ${d}/${n:1} -> ${d}/${n}"
           ln -s ${d}/${n} ${d}/${n:1}
