@@ -28,11 +28,11 @@ brewinstall() {
     read -e -p "Would you like to create it? [y/n] " ans
     ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
     if [[ ${ans} == "y" ]]; then
-      mkdir -p ${dir}
+      mkdir -p ${dir} && break
     else
       echo " * ${red}ERROR${reset}: please supply a valid directory"
     fi
-    read -e -p "Homebrew Install Directory: " dir
+    read -e -p "What directory should we install to? " dir
   done
   sudo mkdir -p ${dir}/homebrew
   sudo chown -R $(whoami) ${dir}/homebrew
@@ -98,6 +98,7 @@ sudo xcodebuild -license accept
 if ! hash brew 2>/dev/null; then
   brewinstall
 fi
+
 checkins jq
 checkins python3
 checkins git
@@ -208,19 +209,26 @@ if [[ ${ans} == "y" ]]; then
   fi
 fi
 
-echo "${yellow}Configuring git${reset}"
-read -e -p "Enter your github email: " email 
-read -e -p "Enter your name: " name
-echo """
-[user]
-  email = ${email}
-  name = ${name}
-[hub]
-  protocol = ssh
-""" > ~/.gitconfig
+if [[ ! -f ~/.gitconfig]]; then
+  read -e -p "${yellow}Create .gitconfig?${reset} [y/n] " ans
+  ans=$(echo ${ans} | tr '[:upper:]' '[:lower:]')
+  if [[ ${ans} == "y" ]]; then
+    read -e -p "Enter your github email: " email 
+    read -e -p "Enter your name: " name
+    echo """
+    [user]
+      email = ${email}
+      name = ${name}
+    [hub]
+      protocol = ssh
+    """ > ~/.gitconfig
+  fi
+else
+  echo " * ${red}WARN${reset}: .gitconfig already exists - skipping"
+fi
 
 echo "${yellow}Logging in to github...${reset}"
 gh auth login
 
-source ~/.bash_profile
 echo "${green}COMPLETE${reset}: Setup is complete!"
+source ~/.bash_profile
